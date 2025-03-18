@@ -1,4 +1,7 @@
 package com.example.freizeitpark.repository;
 
-public class FreizeitparkRepository {
+import com.example.freizeitpark.model.Freizeitpark;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface FreizeitparkRepository extends JpaRepository<Freizeitpark, Long> {
 }

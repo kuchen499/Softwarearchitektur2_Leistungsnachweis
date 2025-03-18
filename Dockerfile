@@ -1,4 +1,8 @@
-FROM ubuntu:latest
-LABEL authors="mattisnothmann"
+FROM --platform=linux/amd64 openjdk:17-jdk-alpine
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
