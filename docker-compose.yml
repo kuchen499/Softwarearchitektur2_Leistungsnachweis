@@ -13,36 +13,30 @@ services:
     networks:
       - freizeitpark_network
 
-#  backend:
-#    build: .
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - db
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/freizeitpark
-#      SPRING_DATASOURCE_USERNAME: mattis
-#      SPRING_DATASOURCE_PASSWORD: 1234
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/freizeitpark
+      SPRING_DATASOURCE_USERNAME: mattis
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - freizeitpark_network
 
-#  frontend:
-#    build:
-#      context: ./frontend
-#      dockerfile: Dockerfile
-#    ports:
-#      - "3000:80"
-#
-#  seed:
-#      build: .
-#      entrypoint: [ "/bin/sh", "seed_data.sh" ]
-#      environment:
-#        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/freizeitpark
-#        - SPRING_DATASOURCE_USERNAME=mattis
-#        - SPRING_DATASOURCE_PASSWORD=1234
-#        - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-#      depends_on:
-#        - db
-#      restart: "no"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - freizeitpark_network
 
 volumes:
   pgdata:
