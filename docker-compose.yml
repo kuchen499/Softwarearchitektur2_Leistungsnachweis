@@ -9,38 +9,44 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+     # - ./init.sql/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - freizeitpark_network
 
-  backend:
-    build: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/freizeitpark
-      SPRING_DATASOURCE_USERNAME: yourusername
-      SPRING_DATASOURCE_PASSWORD: yourpassword
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#  backend:
+#    build: .
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - db
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/freizeitpark
+#      SPRING_DATASOURCE_USERNAME: mattis
+#      SPRING_DATASOURCE_PASSWORD: 1234
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:80"
-
-  seed:
-    seed:
-      build: .
-      entrypoint: [ "/bin/sh", "seed_data.sh" ]
-      environment:
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/freizeitpark
-        - SPRING_DATASOURCE_USERNAME=mattis
-        - SPRING_DATASOURCE_PASSWORD=1234
-        - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      depends_on:
-        - db
-      restart: "no"
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    ports:
+#      - "3000:80"
+#
+#  seed:
+#      build: .
+#      entrypoint: [ "/bin/sh", "seed_data.sh" ]
+#      environment:
+#        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/freizeitpark
+#        - SPRING_DATASOURCE_USERNAME=mattis
+#        - SPRING_DATASOURCE_PASSWORD=1234
+#        - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+#      depends_on:
+#        - db
+#      restart: "no"
 
 volumes:
   pgdata:
+
+networks:
+  freizeitpark_network:
+    driver: bridge
