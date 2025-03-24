@@ -19,7 +19,12 @@ const Touren = ({ isDirector }) => {
     useEffect(() => {
         fetch("http://localhost:8080/api/touren")
             .then(response => response.json())
-            .then(data => setTours(data))
+            .then(data => {
+                console.log("API Response:", data);
+                // Falls die Touren unter _embedded.tour liegen:
+                const toursArray = data._embedded ? data._embedded.tour : data;
+                setTours(toursArray);
+            })
             .catch(error => console.error("Error fetching tours:", error));
     }, []);
 
