@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Typography, TextField, Button, Grid } from '@mui/material';
+import {
+    Container,
+    Grid,
+    Card,
+    CardMedia,
+    CardContent,
+    CardActions,
+    Typography,
+    Button,
+    TextField
+} from '@mui/material';
 import { CartContext } from './CartContext';
 
 const Freizeitpark = ({ isDirector }) => {
@@ -11,21 +21,19 @@ const Freizeitpark = ({ isDirector }) => {
 
     useEffect(() => {
         fetch("http://localhost:8080/api/freizeitpark")
-            .then(response => response.json())
-            .then(data => setParkData(data))
-            .catch(error => console.error("Error fetching park data:", error));
+            .then(res => res.json())
+            .then(setParkData)
+            .catch(console.error);
     }, []);
 
-    if (!parkData) return <div>Loading Freizeitpark-Daten...</div>;
+    if (!parkData) return <Typography>Loading…</Typography>;
 
     const handleAddEntranceToCart = () => {
-        const priceAdult = 20; // Beispielpreis für Erwachsenenticket
-        const priceChild = 10; // Beispielpreis für Kinderticket
         addItem({
             id: `entrance-${Date.now()}`,
             type: 'entrance',
             quantity: adultTickets + childTickets,
-            price: (adultTickets * priceAdult + childTickets * priceChild) / (adultTickets + childTickets || 1),
+            price: (adultTickets * 20 + childTickets * 10) / (adultTickets + childTickets || 1),
             details: { adultTickets, childTickets }
         });
         setAdultTickets(0);
@@ -33,134 +41,83 @@ const Freizeitpark = ({ isDirector }) => {
     };
 
     return (
-        <Container style={{ marginTop: '20px' }}>
-            {/* Hier folgt dein bestehender Freizeitpark-Inhalt (Logo, Name, Adresse, etc.) */}
-            <Typography variant="h4" gutterBottom>Freizeitpark Details</Typography>
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <img src={parkData.logo} alt="Logo" style={{ maxWidth: "150px" }} />
-                </Grid>
-                {/* Weitere Felder (Name, Adresse, Öffnungszeiten, Eintrittspreise, Beschreibung) */}
-                <Grid item xs={12}>
-                    {editMode ? (
-                        <TextField
-                            fullWidth
-                            label="Name"
-                            name="name"
-                            value={parkData.name}
-                            onChange={(e) => setParkData({ ...parkData, name: e.target.value })}
+        <Container>
+            <Grid container spacing={4}>
+                {/* Park Details Card */}
+                <Grid item xs={12} md={6}>
+                    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <CardMedia
+                            component="img"
+                            height="200"
+                            image={parkData.logo}
+                            alt="Park Logo"
                         />
-                    ) : (
-                        <Typography variant="h5">{parkData.name}</Typography>
-                    )}
+                        <CardContent sx={{ flexGrow: 1 }}>
+                            <Typography variant="h4">{parkData.name}</Typography>
+                            <Typography variant="body1" sx={{ mt: 1 }}>
+                                <strong>Adresse:</strong> {parkData.adresse}
+                            </Typography>
+                            <Typography variant="body1"><strong>Öffnungszeiten:</strong> {parkData.oeffnungszeiten}</Typography>
+                            <Typography variant="body1"><strong>Eintrittspreise:</strong> {parkData.eintrittspreise}</Typography>
+                            <Typography variant="body2" sx={{ mt: 2 }}>{parkData.beschreibung}</Typography>
+                        </CardContent>
+                        {isDirector && (
+                            <CardActions>
+                                <Button variant="outlined" onClick={() => setEditMode(!editMode)}>
+                                    {editMode ? "Abbrechen" : "Bearbeiten"}
+                                </Button>
+                                {editMode && (
+                                    <Button variant="contained" color="secondary" onClick={() => {
+                                        fetch("http://localhost:8080/api/freizeitpark", {
+                                            method: "PUT",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify(parkData)
+                                        }).then(res => res.json()).then(data => {
+                                            setParkData(data);
+                                            setEditMode(false);
+                                        });
+                                    }}>
+                                        Speichern
+                                    </Button>
+                                )}
+                            </CardActions>
+                        )}
+                    </Card>
                 </Grid>
-                <Grid item xs={12}>
-                    {editMode ? (
-                        <TextField
-                            fullWidth
-                            label="Adresse"
-                            name="adresse"
-                            value={parkData.adresse}
-                            onChange={(e) => setParkData({ ...parkData, adresse: e.target.value })}
-                        />
-                    ) : (
-                        <Typography variant="body1"><strong>Adresse:</strong> {parkData.adresse}</Typography>
-                    )}
-                </Grid>
-                <Grid item xs={12}>
-                    {editMode ? (
-                        <TextField
-                            fullWidth
-                            label="Öffnungszeiten"
-                            name="oeffnungszeiten"
-                            value={parkData.oeffnungszeiten}
-                            onChange={(e) => setParkData({ ...parkData, oeffnungszeiten: e.target.value })}
-                        />
-                    ) : (
-                        <Typography variant="body1"><strong>Öffnungszeiten:</strong> {parkData.oeffnungszeiten}</Typography>
-                    )}
-                </Grid>
-                <Grid item xs={12}>
-                    {editMode ? (
-                        <TextField
-                            fullWidth
-                            label="Eintrittspreise"
-                            name="eintrittspreise"
-                            value={parkData.eintrittspreise}
-                            onChange={(e) => setParkData({ ...parkData, eintrittspreise: e.target.value })}
-                        />
-                    ) : (
-                        <Typography variant="body1"><strong>Eintrittspreise:</strong> {parkData.eintrittspreise}</Typography>
-                    )}
-                </Grid>
-                <Grid item xs={12}>
-                    {editMode ? (
-                        <TextField
-                            fullWidth
-                            multiline
-                            label="Beschreibung"
-                            name="beschreibung"
-                            value={parkData.beschreibung}
-                            onChange={(e) => setParkData({ ...parkData, beschreibung: e.target.value })}
-                        />
-                    ) : (
-                        <Typography variant="body1"><strong>Beschreibung:</strong> {parkData.beschreibung}</Typography>
-                    )}
-                </Grid>
-            </Grid>
-            {isDirector && (
-                <>
-                    <Button variant="contained" color="primary" onClick={() => setEditMode(!editMode)} style={{ marginTop: '20px' }}>
-                        {editMode ? "Abbrechen" : "Bearbeiten"}
-                    </Button>
-                    {editMode && (
-                        <Button variant="contained" color="secondary" onClick={() => {
-                            fetch("http://localhost:8080/api/freizeitpark", {
-                                method: "PUT",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify(parkData)
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    setParkData(data);
-                                    setEditMode(false);
-                                })
-                                .catch(error => console.error("Error updating park data:", error));
-                        }} style={{ marginTop: '20px', marginLeft: '10px' }}>
-                            Speichern
-                        </Button>
-                    )}
-                </>
-            )}
 
-            {/* Eintrittsticket Kaufbereich */}
-            <Typography variant="h5" style={{ marginTop: '40px' }}>Tickets kaufen (Eintritt)</Typography>
-            <Grid container spacing={2}>
-                <Grid item xs={6}>
-                    <TextField
-                        label="Erwachsenentickets"
-                        type="number"
-                        value={adultTickets}
-                        onChange={(e) => setAdultTickets(parseInt(e.target.value) || 0)}
-                        fullWidth
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField
-                        label="Kindertickets"
-                        type="number"
-                        value={childTickets}
-                        onChange={(e) => setChildTickets(parseInt(e.target.value) || 0)}
-                        fullWidth
-                    />
+                {/* Ticket Purchase Card */}
+                <Grid item xs={12} md={6}>
+                    <Card sx={{ p: 3 }}>
+                        <Typography variant="h5" gutterBottom>Tickets kaufen</Typography>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Erwachsenentickets"
+                                    type="number"
+                                    value={adultTickets}
+                                    onChange={e => setAdultTickets(+e.target.value || 0)}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Kindertickets"
+                                    type="number"
+                                    value={childTickets}
+                                    onChange={e => setChildTickets(+e.target.value || 0)}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
+                        <Typography variant="h6" sx={{ mt: 2 }}>
+                            Gesamtpreis: {(adultTickets * 20 + childTickets * 10).toFixed(2)} €
+                        </Typography>
+                        <Button fullWidth variant="contained" sx={{ mt: 2 }} onClick={handleAddEntranceToCart}>
+                            In den Warenkorb
+                        </Button>
+                    </Card>
                 </Grid>
             </Grid>
-            <Typography variant="h6" style={{ marginTop: '10px' }}>
-                Gesamtpreis: {(adultTickets * 20 + childTickets * 10).toFixed(2)} €
-            </Typography>
-            <Button variant="contained" color="primary" onClick={handleAddEntranceToCart} style={{ marginTop: '10px' }}>
-                In den Warenkorb
-            </Button>
         </Container>
     );
 };

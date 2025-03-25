@@ -34,7 +34,7 @@ public class FreizeitparkController {
     public Freizeitpark updateFreizeitpark(@RequestBody Freizeitpark updatedPark) {
         Freizeitpark park = getFreizeitpark();
         park.setName(updatedPark.getName());
-        park.setLogo(updatedPark.getLogo());
+        park.setLogo("img_4.png");
         park.setAdresse(updatedPark.getAdresse());
         park.setOeffnungszeiten(updatedPark.getOeffnungszeiten());
         park.setEintrittspreise(updatedPark.getEintrittspreise());
