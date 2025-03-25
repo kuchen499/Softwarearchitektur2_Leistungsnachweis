@@ -12,9 +12,7 @@ function App() {
     const [isDirector, setIsDirector] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
 
-    const handleLogout = () => {
-        setIsDirector(false);
-    };
+    const handleLogout = () => setIsDirector(false);
 
     return (
         <CartProvider>
@@ -32,12 +30,14 @@ function App() {
                         )}
                     </Toolbar>
                 </AppBar>
+
                 <Routes>
                     <Route path="/" element={<Freizeitpark isDirector={isDirector} />} />
                     <Route path="/attraktionen" element={<Attraktionen isDirector={isDirector} />} />
                     <Route path="/touren" element={<Touren isDirector={isDirector} />} />
                     <Route path="/login" element={<Login setIsDirector={setIsDirector} />} />
                 </Routes>
+
                 <ShoppingCart open={cartOpen} onClose={() => setCartOpen(false)} />
             </Router>
         </CartProvider>

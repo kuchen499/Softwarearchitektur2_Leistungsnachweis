@@ -45,14 +45,14 @@ CREATE TABLE IF NOT EXISTS tour_attraktionen (
     FOREIGN KEY (tour_id) REFERENCES tour(id) ON DELETE CASCADE
     );
 
--- Tabelle für TicketOrder (TicketOrder-Entität)
+-- Tabelle für TicketOrder (TicketOrder-Entität) — NEU hinzugefügt
 CREATE TABLE IF NOT EXISTS ticket_order (
                                             id BIGSERIAL PRIMARY KEY,
                                             booking_id VARCHAR(255),
     entrance_tickets INTEGER,
     tour_tickets INTEGER,
     total_price DOUBLE PRECISION,
-    order_date TIMESTAMP
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- Daten in die Tabelle "freizeitpark" einfügen
@@ -130,7 +130,13 @@ VALUES
     (8, 'Kletterpark'),
     (8, 'Eislaufbahn');
 
--- Optional: Daten in die Tabelle "ticket_order" einfügen
-INSERT INTO ticket_order (booking_id, entrance_tickets, tour_tickets, total_price, order_date)
-VALUES
-    ('sample-booking-001', 2, 1, 50.0, '2025-03-24 18:00:00');
+-- Tabelle für TicketOrder (TicketOrder‑Entität)
+CREATE TABLE IF NOT EXISTS ticket_order (
+                                            id BIGSERIAL PRIMARY KEY,
+                                            booking_id VARCHAR(255),
+    entrance_tickets INTEGER,
+    tour_tickets INTEGER,
+    total_price DOUBLE PRECISION,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+ALTER TABLE ticket_order ADD COLUMN child_tickets INTEGER DEFAULT 0;

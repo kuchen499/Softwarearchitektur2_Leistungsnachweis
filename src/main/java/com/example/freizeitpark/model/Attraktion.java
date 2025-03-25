@@ -13,7 +13,9 @@ public class Attraktion {
     private String name;
     private String logo;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "attraktion_tags", joinColumns = @JoinColumn(name = "attraktion_id"))
+    @Column(name = "tags")
     private List<String> tags;
 
     @Column(length = 2000)
