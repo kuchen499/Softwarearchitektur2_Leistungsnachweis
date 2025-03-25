@@ -19,11 +19,6 @@ public class TicketOrderController {
 
     @PostMapping
     public TicketOrder purchaseTickets(@RequestBody TicketOrder order) {
-        // Berechne den Gesamtpreis
-        double total = order.getEntranceTickets() * priceEntrance
-                + order.getTourTickets() * priceTour;
-        order.setTotalPrice(total);
-        // Speichern (bookingId und orderDate werden via @PrePersist gesetzt)
         return ticketOrderRepository.save(order);
     }
 }

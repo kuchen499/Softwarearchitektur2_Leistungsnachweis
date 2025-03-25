@@ -14,7 +14,9 @@ public class Tour {
     private String logo;
     private String preis;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "tour_attraktionen", joinColumns = @JoinColumn(name = "tour_id"))
+    @Column(name = "attraktionen")
     private List<String> attraktionen;
 
     private String dauer;
